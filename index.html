@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP2A Commercial</title>
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --vert:       #2e7d32;
+  --vert-clair: #43a047;
+  --vert-dark:  #1b5e20;
+  --vert-bg:    #e8f5e9;
+  --noir:       #111111;
+  --gris-dark:  #1e1e1e;
+  --gris:       #555555;
+  --gris-clair: #e0e0e0;
+  --blanc:      #ffffff;
+  --rouge:      #c62828;
+  --orange:     #e65100;
+  --bleu:       #1565c0;
+  --jaune-bg:   #fff8e1;
+  --rouge-bg:   #ffebee;
+  --rayon:      8px;
+  --ombre:      0 2px 8px rgba(0,0,0,0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: var(--noir); min-height: 100vh; font-size: 15px; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; font-size: 14px; }
+a { color: var(--vert); }
+
+/* ============================================================
+   ÉCRAN D'ACCUEIL
+   ============================================================ */
+#splash {
+  position: fixed; inset: 0; background: var(--gris-dark);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; transition: opacity .5s;
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+.splash-logo {
+  font-size: 3rem; font-weight: 900; letter-spacing: 4px;
+  color: var(--vert-clair);
+  text-shadow: 0 2px 20px rgba(67,160,71,.4);
+  margin-bottom: 6px;
+}
+.splash-sub { color: #aaa; font-size: 1rem; letter-spacing: 2px; margin-bottom: 48px; text-transform: uppercase; }
+#btn-enter {
+  background: var(--vert); color: #fff; border: none;
+  padding: 14px 48px; border-radius: 30px; font-size: 1.05rem; font-weight: 700;
+  letter-spacing: 1px; transition: background .2s, transform .1s;
+}
+#btn-enter:hover { background: var(--vert-clair); transform: translateY(-2px); }
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+#app { display: none; flex-direction: column; min-height: 100vh; }
+#app.visible { display: flex; }
+
+/* -------- HEADER -------- */
+header {
+  background: var(--gris-dark); color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 56px; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.header-logo { font-size: 1.3rem; font-weight: 900; color: var(--vert-clair); letter-spacing: 2px; }
+.header-logo span { color: #fff; font-weight: 300; }
+.header-actions { display: flex; gap: 8px; }
+.btn-icon {
+  background: none; border: 1px solid #444; color: #ccc;
+  border-radius: var(--rayon); padding: 6px 12px; font-size: 13px; transition: .2s;
+}
+.btn-icon:hover { border-color: var(--vert-clair); color: var(--vert-clair); }
+
+/* -------- NAV TABS -------- */
+nav {
+  background: var(--noir); display: flex; overflow-x: auto; gap: 0;
+  border-bottom: 2px solid var(--vert);
+}
+nav::-webkit-scrollbar { height: 3px; }
+nav::-webkit-scrollbar-thumb { background: var(--vert); }
+.nav-tab {
+  background: none; border: none; color: #aaa;
+  padding: 12px 20px; font-size: 14px; white-space: nowrap;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color .2s, border-color .2s;
+}
+.nav-tab:hover { color: #fff; }
+.nav-tab.active { color: var(--vert-clair); border-bottom-color: var(--vert-clair); font-weight: 600; }
+.nav-tab-add {
+  background: none; border: none; color: var(--vert-clair);
+  padding: 12px 16px; font-size: 18px; font-weight: bold;
+}
+
+/* -------- CONTENU -------- */
+main { flex: 1; padding: 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
+
+/* ============================================================
+   COMPOSANTS COMMUNS
+   ============================================================ */
+.card {
+  background: #fff; border-radius: var(--rayon);
+  box-shadow: var(--ombre); padding: 20px; margin-bottom: 16px;
+}
+.section-title {
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;
+  color: var(--vert-dark); border-left: 4px solid var(--vert); padding-left: 10px;
+}
+
+/* Boutons */
+.btn { border: none; border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: 600; transition: .15s; }
+.btn-primary { background: var(--vert); color: #fff; }
+.btn-primary:hover { background: var(--vert-clair); }
+.btn-secondary { background: #f0f0f0; color: var(--noir); }
+.btn-secondary:hover { background: var(--gris-clair); }
+.btn-danger { background: var(--rouge); color: #fff; }
+.btn-danger:hover { background: #e53935; }
+.btn-warn { background: var(--orange); color: #fff; }
+.btn-warn:hover { background: #f57c00; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+
+/* Badges statut */
+.badge {
+  display: inline-block; border-radius: 20px; padding: 2px 10px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+}
+.badge-prospect { background: #e3f2fd; color: #1565c0; }
+.badge-actif    { background: #e8f5e9; color: var(--vert-dark); }
+.badge-ancien   { background: #f3e5f5; color: #6a1b9a; }
+.badge-visiter  { background: #fff9c4; color: #f57f17; }
+.badge-visite   { background: var(--vert-bg); color: var(--vert-dark); }
+.badge-relancer { background: var(--rouge-bg); color: var(--rouge); }
+.badge-commande { background: #e3f2fd; color: var(--bleu); }
+.badge-regulier { background: #e8f5e9; color: var(--vert-dark); }
+.badge-faible  { background: #f5f5f5; color: #666; }
+.badge-moyen   { background: #fff8e1; color: #e65100; }
+.badge-fort    { background: #ffebee; color: var(--rouge); }
+
+/* ============================================================
+   TABLEAU DE BORD
+   ============================================================ */
+.dashboard-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;
+}
+.kpi-card {
+  background: #fff; border-radius: var(--rayon); box-shadow: var(--ombre);
+  padding: 20px; border-left: 5px solid var(--vert); text-align: center;
+}
+.kpi-card.orange { border-left-color: var(--orange); }
+.kpi-card.rouge  { border-left-color: var(--rouge); }
+.kpi-card.bleu   { border-left-color: var(--bleu); }
+.kpi-val { font-size: 2.4rem; font-weight: 900; color: var(--vert-dark); line-height: 1; }
+.kpi-card.orange .kpi-val { color: var(--orange); }
+.kpi-card.rouge  .kpi-val { color: var(--rouge); }
+.kpi-card.bleu   .kpi-val { color: var(--bleu); }
+.kpi-label { font-size: 13px; color: var(--gris); margin-top: 6px; }
+
+/* Relances du jour */
+.relance-alerte {
+  background: var(--rouge-bg); border: 1px solid #ef9a9a;
+  border-radius: var(--rayon); padding: 12px 16px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.relance-alerte .icon { font-size: 1.4rem; }
+
+/* ============================================================
+   LISTE GARAGES
+   ============================================================ */
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; align-items: center;
+}
+.search-box {
+  flex: 1; min-width: 200px; padding: 9px 14px;
+  border: 1px solid var(--gris-clair); border-radius: 6px;
+  outline: none; transition: border .2s;
+}
+.search-box:focus { border-color: var(--vert); }
+select.filter {
+  padding: 9px 14px; border: 1px solid var(--gris-clair);
+  border-radius: 6px; background: #fff; outline: none;
+}
+select.filter:focus { border-color: var(--vert); }
+
+/* Grille de cartes garages */
+.garages-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;
+}
+.garage-card {
+  background: #fff; border-radius: var(--rayon); box-shadow: var(--ombre);
+  padding: 18px; border-top: 4px solid var(--vert);
+  transition: box-shadow .2s, transform .15s;
+}
+.garage-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.15); transform: translateY(-2px); }
+.garage-card.relance-today { border-top-color: var(--rouge); background: #fff9f9; }
+.garage-card.relance-past  { border-top-color: var(--orange); }
+.garage-name { font-size: 1rem; font-weight: 800; color: var(--noir); margin-bottom: 4px; }
+.garage-contact { font-size: 13px; color: var(--gris); margin-bottom: 8px; }
+.garage-info { font-size: 13px; color: var(--gris); margin-bottom: 2px; }
+.garage-badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
+.garage-dates { font-size: 12px; color: var(--gris); margin-top: 8px; }
+.garage-dates span { font-weight: 600; color: var(--noir); }
+.garage-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--gris);
+}
+.empty-state .big { font-size: 3rem; margin-bottom: 10px; }
+
+/* ============================================================
+   MODALES
+   ============================================================ */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal-backdrop.hidden { display: none; }
+.modal {
+  background: #fff; border-radius: var(--rayon); box-shadow: 0 8px 40px rgba(0,0,0,.25);
+  width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  background: var(--gris-dark); color: #fff;
+  padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  border-radius: var(--rayon) var(--rayon) 0 0; position: sticky; top: 0; z-index: 1;
+}
+.modal-title { font-size: 1rem; font-weight: 700; }
+.btn-close { background: none; border: none; color: #aaa; font-size: 22px; line-height: 1; }
+.btn-close:hover { color: #fff; }
+.modal-body { padding: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+label { font-size: 13px; font-weight: 600; color: var(--gris); }
+.form-control {
+  padding: 9px 12px; border: 1px solid var(--gris-clair);
+  border-radius: 6px; outline: none; transition: border .2s;
+}
+.form-control:focus { border-color: var(--vert); }
+textarea.form-control { resize: vertical; min-height: 70px; }
+.modal-footer {
+  padding: 14px 20px; border-top: 1px solid var(--gris-clair);
+  display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0;
+  background: #fff; border-radius: 0 0 var(--rayon) var(--rayon);
+}
+
+/* ============================================================
+   DÉTAIL GARAGE (vue)
+   ============================================================ */
+.detail-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+}
+.detail-name { font-size: 1.5rem; font-weight: 900; color: var(--noir); }
+.detail-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-item label { font-size: 12px; color: var(--gris); display: block; margin-bottom: 2px; }
+.info-item p { font-size: 14px; color: var(--noir); font-weight: 500; }
+.info-item.full { grid-column: 1/-1; }
+
+/* Historique visites */
+.visite-item {
+  border: 1px solid var(--gris-clair); border-radius: 6px; padding: 14px;
+  margin-bottom: 10px; border-left: 4px solid var(--vert);
+}
+.visite-date { font-weight: 700; color: var(--vert-dark); margin-bottom: 6px; }
+.visite-row { font-size: 13px; margin-bottom: 3px; color: var(--gris); }
+.visite-row strong { color: var(--noir); }
+.visite-actions { margin-top: 8px; display: flex; gap: 6px; }
+
+/* ============================================================
+   SECTEURS (gestion)
+   ============================================================ */
+.secteur-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.secteur-chip {
+  background: var(--vert-bg); border: 1px solid var(--vert); border-radius: 20px;
+  padding: 6px 16px; font-size: 13px; font-weight: 600; color: var(--vert-dark);
+  display: flex; align-items: center; gap: 8px;
+}
+.secteur-chip button { background: none; border: none; color: var(--rouge); font-size: 15px; cursor: pointer; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  main { padding: 12px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .info-grid  { grid-template-columns: 1fr; }
+  .dashboard-kpis { grid-template-columns: 1fr 1fr; }
+  .garages-grid { grid-template-columns: 1fr; }
+  .modal { max-height: 95vh; }
+}
+
+/* ============================================================
+   SCROLL
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f0f0f0; }
+::-webkit-scrollbar-thumb { background: var(--vert); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ===== ÉCRAN D'ACCUEIL ===== -->
+<div id="splash">
+  <div class="splash-logo">EP2A</div>
+  <div class="splash-sub">Commercial — Suivi garages</div>
+  <button id="btn-enter" onclick="enterApp()">▶ Entrer</button>
+</div>
+
+<!-- ===== APPLICATION ===== -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">EP2A <span>Commercial</span></div>
+    <div class="header-actions">
+      <button class="btn-icon" onclick="exportJSON()" title="Exporter JSON">⬇ Export JSON</button>
+      <button class="btn-icon" onclick="exportCSV()"  title="Exporter CSV">⬇ Export CSV</button>
+      <button class="btn-icon" onclick="triggerImport()" title="Importer JSON">⬆ Import</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav id="nav-tabs">
+    <button class="nav-tab active" data-view="dashboard" onclick="switchView('dashboard', this)">🏠 Tableau de bord</button>
+    <button class="nav-tab" data-view="garages"   onclick="switchView('garages', this)">🏢 Tous les garages</button>
+    <button class="nav-tab" data-view="relances"  onclick="switchView('relances', this)">🔔 Relances</button>
+    <button class="nav-tab" data-view="secteurs"  onclick="switchView('secteurs', this)">⚙ Secteurs</button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content"></main>
+
+</div>
+
+<!-- ===== MODAL GARAGE (ajout / édition) ===== -->
+<div class="modal-backdrop hidden" id="modal-garage">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-garage-title">Ajouter un garage</span>
+      <button class="btn-close" onclick="closeModal('modal-garage')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="g-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nom du garage *</label>
+          <input class="form-control" id="g-nom" placeholder="Garage Martin" required>
+        </div>
+        <div class="form-group">
+          <label>Secteur *</label>
+          <select class="form-control" id="g-secteur"></select>
+        </div>
+        <div class="form-group">
+          <label>Nom du contact</label>
+          <input class="form-control" id="g-contact" placeholder="Jean Martin">
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input class="form-control" id="g-tel" placeholder="06 00 00 00 00">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input class="form-control" id="g-email" type="email" placeholder="contact@garage.fr">
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <input class="form-control" id="g-ville" placeholder="Rodez">
+        </div>
+        <div class="form-group full">
+          <label>Adresse</label>
+          <input class="form-control" id="g-adresse" placeholder="12 rue des Artisans">
+        </div>
+        <div class="form-group">
+          <label>Type de client</label>
+          <select class="form-control" id="g-type">
+            <option value="prospect">Prospect</option>
+            <option value="actif">Client actif</option>
+            <option value="ancien">Ancien client</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Potentiel</label>
+          <select class="form-control" id="g-potentiel">
+            <option value="faible">Faible</option>
+            <option value="moyen">Moyen</option>
+            <option value="fort">Fort</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select class="form-control" id="g-statut">
+            <option value="a-visiter">À visiter</option>
+            <option value="visite">Visité</option>
+            <option value="a-relancer">À relancer</option>
+            <option value="commande">Commande en attente</option>
+            <option value="regulier">Client régulier</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dernière visite</label>
+          <input class="form-control" id="g-derniere" type="date">
+        </div>
+        <div class="form-group">
+          <label>Prochaine relance</label>
+          <input class="form-control" id="g-relance" type="date">
+        </div>
+        <div class="form-group full">
+          <label>Marques / Produits demandés</label>
+          <input class="form-control" id="g-produits" placeholder="Huile Motul, filtres MANN...">
+        </div>
+        <div class="form-group full">
+          <label>Besoins du client</label>
+          <textarea class="form-control" id="g-besoins" placeholder="Besoins identifiés..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Observations commerciales</label>
+          <textarea class="form-control" id="g-obs" placeholder="Notes importantes..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-garage')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveGarage()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL VISITE ===== -->
+<div class="modal-backdrop hidden" id="modal-visite">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-visite-title">Ajouter une visite</span>
+      <button class="btn-close" onclick="closeModal('modal-visite')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="v-garage-id">
+      <input type="hidden" id="v-visite-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date de visite *</label>
+          <input class="form-control" id="v-date" type="date" required>
+        </div>
+        <div class="form-group">
+          <label>Prochaine relance</label>
+          <input class="form-control" id="v-relance" type="date">
+        </div>
+        <div class="form-group full">
+          <label>Résumé de l'échange</label>
+          <textarea class="form-control" id="v-resume" placeholder="Discussion sur..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Produits proposés</label>
+          <textarea class="form-control" id="v-produits" placeholder="Huile 5W40, filtre à air..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Réponse du client</label>
+          <textarea class="form-control" id="v-reponse" placeholder="Intéressé par... / Refus car..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Action à faire ensuite</label>
+          <textarea class="form-control" id="v-action" placeholder="Envoyer devis, rappeler le..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-visite')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveVisite()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL DÉTAIL GARAGE ===== -->
+<div class="modal-backdrop hidden" id="modal-detail">
+  <div class="modal" style="max-width:780px">
+    <div class="modal-header">
+      <span class="modal-title">Fiche garage</span>
+      <button class="btn-close" onclick="closeModal('modal-detail')">×</button>
+    </div>
+    <div class="modal-body" id="modal-detail-body"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL SECTEUR ===== -->
+<div class="modal-backdrop hidden" id="modal-secteur">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">Ajouter un secteur</span>
+      <button class="btn-close" onclick="closeModal('modal-secteur')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nom du secteur</label>
+        <input class="form-control" id="s-nom" placeholder="Ex: Rodez">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-secteur')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveSecteur()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DONNÉES ET ÉTAT
+   ============================================================ */
+let data = {
+  secteurs: ['Rodez', 'Millau', 'Decazeville', 'Villefranche', 'Autre'],
+  garages: []
+};
+
+let currentView = 'dashboard';
+let editingGarageId = null;
+
+const STORAGE_KEY = 'ep2a_commercial_v1';
+
+/* ============================================================
+   DONNÉES FICTIVES D'EXEMPLE
+   ============================================================ */
+const EXEMPLES = [
+  {
+    id: 'g001', nom: 'Garage Dupont Auto', contact: 'Pierre Dupont', tel: '05 65 44 21 00',
+    email: 'pdupont@dupont-auto.fr', adresse: '15 Avenue de la Gare', ville: 'Rodez',
+    secteur: 'Rodez', type: 'actif', potentiel: 'fort', statut: 'regulier',
+    derniere: '2025-06-10', relance: '2025-07-10',
+    produits: 'Huile Motul 5W40, filtres MANN',
+    besoins: 'Renouvellement stock huile mensuel + filtres',
+    obs: 'Client fidèle depuis 3 ans. Toujours disponible le mardi matin.',
+    visites: [
+      { id: 'v001', date: '2025-06-10', resume: 'Passage mensuel, commande habituelle passée', produits: 'Huile 5W40 x20L, filtres x10', reponse: 'Commande confirmée, livraison sous 48h', action: 'Envoyer bon de commande', relance: '2025-07-10' },
+      { id: 'v002', date: '2025-05-12', resume: 'Visite de routine', produits: 'Huile 5W30 x10L', reponse: 'Satisfait de la qualité', action: 'Rappel dans 1 mois', relance: '2025-06-10' }
+    ]
+  },
+  {
+    id: 'g002', nom: 'Carrosserie Lebrun', contact: 'Marc Lebrun', tel: '05 65 60 33 77',
+    email: 'mlebrun@carrosserie-lebrun.fr', adresse: '8 Rue des Artisans', ville: 'Millau',
+    secteur: 'Millau', type: 'prospect', potentiel: 'moyen', statut: 'a-relancer',
+    derniere: '2025-05-20', relance: new Date().toISOString().split('T')[0],
+    produits: 'Peintures, mastics carrosserie',
+    besoins: 'Cherche fournisseur peinture moins cher que son actuel',
+    obs: 'Intéressé mais en cours de comparaison. Rappeler impérativement.',
+    visites: [
+      { id: 'v003', date: '2025-05-20', resume: 'Premier contact, présentation gamme EP2A', produits: 'Catalogue peinture + tarifs', reponse: 'Intéressé, demande devis comparatif', action: 'Envoyer devis avant fin mai', relance: new Date().toISOString().split('T')[0] }
+    ]
+  },
+  {
+    id: 'g003', nom: 'Garage du Vallon', contact: 'Sophie Valat', tel: '05 65 43 11 55',
+    email: 'garage.vallon@orange.fr', adresse: '22 Route Nationale', ville: 'Decazeville',
+    secteur: 'Decazeville', type: 'actif', potentiel: 'fort', statut: 'visite',
+    derniere: '2025-06-18', relance: '2025-07-15',
+    produits: 'Lubrifiants, liquide de frein, antigel',
+    besoins: 'Stock complet ateliers + pièces courantes',
+    obs: 'Excellente relation commerciale. Ouvert aux nouvelles références.',
+    visites: [
+      { id: 'v004', date: '2025-06-18', resume: 'Visite trimestrielle, bilan commandes', produits: 'Lubrifiants 10W40, DOT4 x5, antigel x10', reponse: 'Très satisfait, augmente les volumes', action: 'Préparer offre volume Q3', relance: '2025-07-15' }
+    ]
+  },
+  {
+    id: 'g004', nom: 'Auto Services Villefranche', contact: 'Alain Morel', tel: '05 65 45 87 20',
+    email: 'amorel@as-villefranche.fr', adresse: '5 Zone Artisanale', ville: 'Villefranche-de-Rouergue',
+    secteur: 'Villefranche', type: 'ancien', potentiel: 'moyen', statut: 'a-visiter',
+    derniere: '2025-02-14', relance: '2025-06-01',
+    produits: 'Huiles, filtres',
+    besoins: 'À redécouvrir — ancienne relation commerciale',
+    obs: 'Avait arrêté suite à souci livraison. Contacter pour renouer la relation.',
+    visites: [
+      { id: 'v005', date: '2025-02-14', resume: 'Dernier passage avant interruption', produits: 'Rien commandé', reponse: 'Mécontent du délai de livraison précédent', action: 'Résoudre le problème et recontacter', relance: '2025-06-01' }
+    ]
+  },
+  {
+    id: 'g005', nom: 'Meca Speed', contact: 'Julien Fabre', tel: '06 12 34 56 78',
+    email: 'jfabre@mecaspeed.com', adresse: '3 Impasse des Mécaniciens', ville: 'Rodez',
+    secteur: 'Rodez', type: 'prospect', potentiel: 'fort', statut: 'commande',
+    derniere: '2025-06-22', relance: '2025-06-30',
+    produits: 'Huile performance, freinage sportif',
+    besoins: 'Passionné véhicules performance, cherche gamme sport',
+    obs: 'Jeune garage en pleine croissance. Commande test en cours. Fort potentiel.',
+    visites: [
+      { id: 'v006', date: '2025-06-22', resume: 'Présentation gamme performance, commande test passée', produits: 'Motul 300V x5L, Brembo x4', reponse: 'Très enthousiaste, commande passée immédiatement', action: 'Suivre livraison + appel satisfaction', relance: '2025-06-30' }
+    ]
+  }
+];
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { data = JSON.parse(saved); }
+    catch(e) { console.error('Erreur chargement données', e); }
+  } else {
+    data.garages = EXEMPLES;
+    save();
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function uid() {
+  return 'id' + Date.now() + Math.random().toString(36).slice(2,6);
+}
+
+/* ============================================================
+   ACCUEIL
+   ============================================================ */
+function enterApp() {
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    renderView();
+  }, 500);
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderView();
+}
+
+function renderView() {
+  const main = document.getElementById('main-content');
+  if      (currentView === 'dashboard') main.innerHTML = renderDashboard();
+  else if (currentView === 'garages')   main.innerHTML = renderGarages();
+  else if (currentView === 'relances')  main.innerHTML = renderRelances();
+  else if (currentView === 'secteurs')  main.innerHTML = renderSecteurs();
+}
+
+/* ============================================================
+   TABLEAU DE BORD
+   ============================================================ */
+function renderDashboard() {
+  const today = todayStr();
+  const moisCourant = today.slice(0, 7); // YYYY-MM
+  const total = data.garages.length;
+  const visiteMois = data.garages.filter(g => g.derniere && g.derniere.startsWith(moisCourant)).length;
+  const aRelancer  = data.garages.filter(g => g.relance && g.relance <= today).length;
+  const commandes  = data.garages.filter(g => g.statut === 'commande').length;
+
+  // Garages à relancer aujourd'hui ou avant
+  const relancesUrgentes = data.garages.filter(g => g.relance && g.relance <= today)
+    .sort((a,b) => a.relance.localeCompare(b.relance));
+
+  // Dernières visites
+  const dernieres = [...data.garages]
+    .filter(g => g.derniere)
+    .sort((a,b) => b.derniere.localeCompare(a.derniere))
+    .slice(0, 5);
+
+  let alerteHTML = '';
+  if (relancesUrgentes.length > 0) {
+    alerteHTML = `<div class="relance-alerte">
+      <span class="icon">🔔</span>
+      <div><strong>${relancesUrgentes.length} garage(s) à relancer aujourd'hui ou en retard !</strong>
+      <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:8px;">
+        ${relancesUrgentes.map(g => `<button class="btn btn-sm btn-danger" onclick="openDetail('${g.id}')">${g.nom}</button>`).join('')}
+      </div></div>
+    </div>`;
+  }
+
+  let dernViHTML = dernieres.length === 0 ? '<p style="color:var(--gris)">Aucune visite enregistrée.</p>' :
+    dernieres.map(g => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gris-clair)">
+        <div>
+          <strong>${g.nom}</strong> <span style="color:var(--gris);font-size:13px">— ${g.ville}</span>
+          <div style="font-size:12px;color:var(--gris)">${g.contact || ''}</div>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:13px;font-weight:600;color:var(--vert-dark)">${formatDate(g.derniere)}</span><br>
+          <button class="btn btn-sm btn-secondary" onclick="openDetail('${g.id}')">Voir</button>
+        </div>
+      </div>`).join('');
+
+  return `
+    ${alerteHTML}
+    <div class="dashboard-kpis">
+      <div class="kpi-card">
+        <div class="kpi-val">${total}</div>
+        <div class="kpi-label">🏢 Garages enregistrés</div>
+      </div>
+      <div class="kpi-card bleu">
+        <div class="kpi-val">${visiteMois}</div>
+        <div class="kpi-label">📅 Visites ce mois-ci</div>
+      </div>
+      <div class="kpi-card rouge">
+        <div class="kpi-val">${aRelancer}</div>
+        <div class="kpi-label">🔔 À relancer</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-val">${commandes}</div>
+        <div class="kpi-label">📦 Commandes en attente</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="dash-grid">
+      <div class="card">
+        <div class="section-title">Dernières visites</div>
+        ${dernViHTML}
+      </div>
+      <div class="card">
+        <div class="section-title">Répartition par secteur</div>
+        ${renderSecteurStats()}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="section-title" style="margin:0">Actions rapides</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="btn btn-primary" onclick="openModalGarage()">➕ Ajouter un garage</button>
+        <button class="btn btn-warn" onclick="switchView('relances', null);renderView()">🔔 Voir les relances</button>
+        <button class="btn btn-secondary" onclick="switchView('garages', null);renderView()">🏢 Tous les garages</button>
+      </div>
+    </div>`;
+}
+
+function renderSecteurStats() {
+  if (data.secteurs.length === 0) return '<p style="color:var(--gris)">Aucun secteur défini.</p>';
+  return data.secteurs.map(s => {
+    const n = data.garages.filter(g => g.secteur === s).length;
+    const pct = data.garages.length ? Math.round(n / data.garages.length * 100) : 0;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600">${s}</span>
+        <span style="font-size:13px;color:var(--gris)">${n} garage${n>1?'s':''}</span>
+      </div>
+      <div style="background:var(--gris-clair);border-radius:10px;height:8px">
+        <div style="background:var(--vert);width:${pct}%;height:8px;border-radius:10px;transition:.4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   VUE GARAGES
+   ============================================================ */
+function renderGarages(params = {}) {
+  const { search = '', secteur = '', statut = '', potentiel = '', type = '', semaineRelance = false } = params;
+  const todayDate = new Date(todayStr());
+  const semainePlus7 = new Date(todayDate); semainePlus7.setDate(todayDate.getDate() + 7);
+
+  let garages = data.garages.filter(g => {
+    if (search) {
+      const q = search.toLowerCase();
+      if (!((g.nom||'').toLowerCase().includes(q) || (g.ville||'').toLowerCase().includes(q) ||
+            (g.contact||'').toLowerCase().includes(q) || (g.tel||'').toLowerCase().includes(q))) return false;
+    }
+    if (secteur   && g.secteur   !== secteur)   return false;
+    if (statut    && g.statut    !== statut)     return false;
+    if (potentiel && g.potentiel !== potentiel)  return false;
+    if (type      && g.type      !== type)       return false;
+    if (semaineRelance && g.relance) {
+      const rd = new Date(g.relance);
+      if (rd > semainePlus7) return false;
+    } else if (semaineRelance && !g.relance) return false;
+    return true;
+  });
+
+  garages.sort((a,b) => {
+    if (a.relance && b.relance) return a.relance.localeCompare(b.relance);
+    if (a.relance) return -1;
+    if (b.relance) return 1;
+    return (a.nom||'').localeCompare(b.nom||'');
+  });
+
+  const secOpts = data.secteurs.map(s => `<option value="${s}" ${secteur===s?'selected':''}>${s}</option>`).join('');
+  const statutOpts = `
+    <option value="">Tous statuts</option>
+    <option value="a-visiter" ${statut==='a-visiter'?'selected':''}>À visiter</option>
+    <option value="visite" ${statut==='visite'?'selected':''}>Visité</option>
+    <option value="a-relancer" ${statut==='a-relancer'?'selected':''}>À relancer</option>
+    <option value="commande" ${statut==='commande'?'selected':''}>Commande en attente</option>
+    <option value="regulier" ${statut==='regulier'?'selected':''}>Client régulier</option>`;
+  const potOpts = `
+    <option value="">Tout potentiel</option>
+    <option value="faible" ${potentiel==='faible'?'selected':''}>Faible</option>
+    <option value="moyen" ${potentiel==='moyen'?'selected':''}>Moyen</option>
+    <option value="fort" ${potentiel==='fort'?'selected':''}>Fort</option>`;
+  const typeOpts = `
+    <option value="">Tous types</option>
+    <option value="prospect" ${type==='prospect'?'selected':''}>Prospect</option>
+    <option value="actif" ${type==='actif'?'selected':''}>Client actif</option>
+    <option value="ancien" ${type==='ancien'?'selected':''}>Ancien client</option>`;
+
+  const cardsHTML = garages.length === 0
+    ? `<div class="empty-state"><div class="big">🏢</div><p>Aucun garage trouvé.</p>
+        <button class="btn btn-primary" style="margin-top:12px" onclick="openModalGarage()">Ajouter un garage</button></div>`
+    : `<div class="garages-grid">${garages.map(g => renderGarageCard(g)).join('')}</div>`;
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <h2 style="font-size:1.2rem;font-weight:800">Garages <span style="color:var(--gris);font-weight:400">(${garages.length})</span></h2>
+      <button class="btn btn-primary" onclick="openModalGarage()">➕ Ajouter un garage</button>
+    </div>
+    <div class="toolbar" id="toolbar-garages">
+      <input class="search-box" placeholder="🔍 Rechercher (nom, ville, contact, tél…)" value="${escHtml(search)}"
+        oninput="applyFilters()" id="search-input">
+      <select class="filter" id="f-secteur" onchange="applyFilters()">
+        <option value="">Tous secteurs</option>${secOpts}
+      </select>
+      <select class="filter" id="f-statut" onchange="applyFilters()">${statutOpts}</select>
+      <select class="filter" id="f-potentiel" onchange="applyFilters()">${potOpts}</select>
+      <select class="filter" id="f-type" onchange="applyFilters()">${typeOpts}</select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="f-semaine" onchange="applyFilters()" ${semaineRelance?'checked':''}> Relances semaine
+      </label>
+    </div>
+    ${cardsHTML}`;
+}
+
+function applyFilters() {
+  const params = {
+    search:         document.getElementById('search-input')?.value || '',
+    secteur:        document.getElementById('f-secteur')?.value || '',
+    statut:         document.getElementById('f-statut')?.value || '',
+    potentiel:      document.getElementById('f-potentiel')?.value || '',
+    type:           document.getElementById('f-type')?.value || '',
+    semaineRelance: document.getElementById('f-semaine')?.checked || false
+  };
+  document.getElementById('main-content').innerHTML = renderGarages(params);
+}
+
+function renderGarageCard(g) {
+  const today = todayStr();
+  let cls = '';
+  if (g.relance === today) cls = 'relance-today';
+  else if (g.relance && g.relance < today) cls = 'relance-past';
+
+  const badges = [
+    `<span class="badge badge-${g.type}">${typeLabel(g.type)}</span>`,
+    `<span class="badge badge-${g.statut}">${statutLabel(g.statut)}</span>`,
+    `<span class="badge badge-${g.potentiel}">⚡ ${potentielLabel(g.potentiel)}</span>`
+  ].join('');
+
+  const relanceWarn = g.relance && g.relance <= today
+    ? `<div style="color:var(--rouge);font-size:12px;font-weight:700;margin-top:4px">🔔 Relance : ${formatDate(g.relance)}</div>` : '';
+
+  return `<div class="garage-card ${cls}">
+    <div class="garage-name">${escHtml(g.nom)}</div>
+    <div class="garage-contact">👤 ${escHtml(g.contact || '—')} · ${escHtml(g.ville || '—')}</div>
+    ${g.tel ? `<div class="garage-info">📞 ${escHtml(g.tel)}</div>` : ''}
+    <div class="garage-badges">${badges}</div>
+    <div class="garage-dates">
+      Dernière visite : <span>${formatDate(g.derniere) || '—'}</span>
+      ${g.relance && g.relance > today ? ` · Relance : <span>${formatDate(g.relance)}</span>` : ''}
+    </div>
+    ${relanceWarn}
+    <div class="garage-actions">
+      <button class="btn btn-sm btn-primary" onclick="openDetail('${g.id}')">📋 Fiche</button>
+      <button class="btn btn-sm btn-secondary" onclick="openModalGarage('${g.id}')">✏ Modifier</button>
+      <button class="btn btn-sm btn-warn" onclick="openModalVisite('${g.id}')">+ Visite</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteGarage('${g.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VUE RELANCES
+   ============================================================ */
+function renderRelances() {
+  const today = todayStr();
+  const semainePlus7 = new Date(today); semainePlus7.setDate(semainePlus7.getDate() + 7);
+  const s7 = semainePlus7.toISOString().split('T')[0];
+
+  const retard    = data.garages.filter(g => g.relance && g.relance < today).sort((a,b)=>a.relance.localeCompare(b.relance));
+  const aujourdhui= data.garages.filter(g => g.relance === today);
+  const semaine   = data.garages.filter(g => g.relance && g.relance > today && g.relance <= s7).sort((a,b)=>a.relance.localeCompare(b.relance));
+
+  const section = (titre, list, color) => {
+    if (list.length === 0) return `<p style="color:var(--gris);margin-bottom:4px">Aucun.</p>`;
+    return list.map(g => `
+      <div class="garage-card" style="border-top-color:${color};margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="garage-name">${escHtml(g.nom)}</div>
+            <div class="garage-contact">👤 ${escHtml(g.contact||'—')} · ${escHtml(g.ville||'—')}</div>
+            ${g.tel?`<div class="garage-info">📞 <a href="tel:${escHtml(g.tel)}">${escHtml(g.tel)}</a></div>`:''}
+            <div style="margin-top:6px"><span style="color:${color};font-weight:700">Relance : ${formatDate(g.relance)}</span></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-primary" onclick="openDetail('${g.id}')">📋 Fiche</button>
+            <button class="btn btn-sm btn-warn" onclick="openModalVisite('${g.id}')">+ Visite</button>
+          </div>
+        </div>
+      </div>`).join('');
+  };
+
+  return `
+    <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:20px">🔔 Relances commerciales</h2>
+
+    <div class="card">
+      <div class="section-title" style="color:var(--rouge)">En retard (${retard.length})</div>
+      ${section('En retard', retard, 'var(--rouge)')}
+    </div>
+    <div class="card">
+      <div class="section-title" style="color:var(--orange)">Aujourd'hui (${aujourdhui.length})</div>
+      ${section("Aujourd'hui", aujourdhui, 'var(--orange)')}
+    </div>
+    <div class="card">
+      <div class="section-title" style="color:var(--bleu)">Cette semaine (${semaine.length})</div>
+      ${section('Cette semaine', semaine, 'var(--bleu)')}
+    </div>`;
+}
+
+/* ============================================================
+   VUE SECTEURS
+   ============================================================ */
+function renderSecteurs() {
+  const chips = data.secteurs.map(s => {
+    const n = data.garages.filter(g => g.secteur === s).length;
+    return `<div class="secteur-chip">
+      ${escHtml(s)} <span style="color:var(--gris);font-weight:400">(${n})</span>
+      <button onclick="deleteSecteur('${escHtml(s)}')" title="Supprimer">×</button>
+    </div>`;
+  }).join('');
+
+  return `
+    <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:20px">⚙ Gestion des secteurs</h2>
+    <div class="card">
+      <div class="section-title">Secteurs commerciaux</div>
+      <div class="secteur-list">${chips || '<p style="color:var(--gris)">Aucun secteur défini.</p>'}</div>
+      <button class="btn btn-primary" onclick="openModalSecteur()">➕ Ajouter un secteur</button>
+    </div>
+    <div class="card">
+      <div class="section-title">Garages par secteur</div>
+      ${renderSecteurStats()}
+    </div>`;
+}
+
+/* ============================================================
+   DÉTAIL GARAGE
+   ============================================================ */
+function openDetail(id) {
+  const g = data.garages.find(x => x.id === id);
+  if (!g) return;
+  const today = todayStr();
+
+  const visites = (g.visites || []).sort((a,b) => b.date.localeCompare(a.date));
+  const visitesHTML = visites.length === 0
+    ? '<p style="color:var(--gris)">Aucune visite enregistrée.</p>'
+    : visites.map(v => `
+        <div class="visite-item">
+          <div class="visite-date">📅 ${formatDate(v.date)}</div>
+          ${v.resume   ? `<div class="visite-row"><strong>Échange :</strong> ${escHtml(v.resume)}</div>` : ''}
+          ${v.produits ? `<div class="visite-row"><strong>Produits :</strong> ${escHtml(v.produits)}</div>` : ''}
+          ${v.reponse  ? `<div class="visite-row"><strong>Réponse :</strong> ${escHtml(v.reponse)}</div>` : ''}
+          ${v.action   ? `<div class="visite-row"><strong>Action :</strong> ${escHtml(v.action)}</div>` : ''}
+          ${v.relance  ? `<div class="visite-row"><strong>Prochaine relance :</strong> <span style="color:var(--vert-dark);font-weight:700">${formatDate(v.relance)}</span></div>` : ''}
+          <div class="visite-actions">
+            <button class="btn btn-sm btn-secondary" onclick="openModalVisite('${g.id}','${v.id}')">✏ Modifier</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteVisite('${g.id}','${v.id}')">🗑 Supprimer</button>
+          </div>
+        </div>`).join('');
+
+  document.getElementById('modal-detail-body').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-name">${escHtml(g.nom)}</div>
+        <div style="color:var(--gris);margin-top:4px">${escHtml(g.ville||'')} · ${escHtml(g.secteur||'')}</div>
+        <div class="garage-badges" style="margin-top:8px">
+          <span class="badge badge-${g.type}">${typeLabel(g.type)}</span>
+          <span class="badge badge-${g.statut}">${statutLabel(g.statut)}</span>
+          <span class="badge badge-${g.potentiel}">⚡ ${potentielLabel(g.potentiel)}</span>
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-detail');openModalVisite('${g.id}')">+ Visite</button>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-detail');openModalGarage('${g.id}')">✏ Modifier</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Coordonnées</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Contact</label><p>${escHtml(g.contact||'—')}</p></div>
+        <div class="info-item"><label>Téléphone</label><p>${g.tel ? `<a href="tel:${escHtml(g.tel)}">${escHtml(g.tel)}</a>` : '—'}</p></div>
+        <div class="info-item"><label>Email</label><p>${g.email ? `<a href="mailto:${escHtml(g.email)}">${escHtml(g.email)}</a>` : '—'}</p></div>
+        <div class="info-item"><label>Ville</label><p>${escHtml(g.ville||'—')}</p></div>
+        <div class="info-item full"><label>Adresse</label><p>${escHtml(g.adresse||'—')}</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Informations commerciales</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Dernière visite</label><p>${formatDate(g.derniere)||'—'}</p></div>
+        <div class="info-item"><label>Prochaine relance</label>
+          <p style="color:${g.relance && g.relance <= today ? 'var(--rouge)':'var(--noir)'}">
+            ${formatDate(g.relance)||'—'} ${g.relance && g.relance <= today ? '⚠' : ''}
+          </p>
+        </div>
+        <div class="info-item full"><label>Produits / Marques demandés</label><p>${escHtml(g.produits||'—')}</p></div>
+        <div class="info-item full"><label>Besoins</label><p style="white-space:pre-line">${escHtml(g.besoins||'—')}</p></div>
+        <div class="info-item full"><label>Observations</label><p style="white-space:pre-line">${escHtml(g.obs||'—')}</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="section-title" style="margin:0">Historique des visites (${visites.length})</div>
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-detail');openModalVisite('${g.id}')">➕ Ajouter une visite</button>
+      </div>
+      ${visitesHTML}
+    </div>`;
+
+  openModal('modal-detail');
+}
+
+/* ============================================================
+   MODAL GARAGE
+   ============================================================ */
+function openModalGarage(id = null) {
+  editingGarageId = id;
+  const g = id ? data.garages.find(x => x.id === id) : null;
+  document.getElementById('modal-garage-title').textContent = g ? 'Modifier le garage' : 'Ajouter un garage';
+  document.getElementById('g-id').value = id || '';
+
+  // Remplir secteurs
+  const sel = document.getElementById('g-secteur');
+  sel.innerHTML = data.secteurs.map(s => `<option value="${escHtml(s)}" ${g && g.secteur===s ? 'selected':''}>${escHtml(s)}</option>`).join('');
+
+  const fill = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
+  fill('g-nom',      g?.nom);
+  fill('g-contact',  g?.contact);
+  fill('g-tel',      g?.tel);
+  fill('g-email',    g?.email);
+  fill('g-adresse',  g?.adresse);
+  fill('g-ville',    g?.ville);
+  fill('g-type',     g?.type || 'prospect');
+  fill('g-potentiel',g?.potentiel || 'moyen');
+  fill('g-statut',   g?.statut || 'a-visiter');
+  fill('g-derniere', g?.derniere);
+  fill('g-relance',  g?.relance);
+  fill('g-produits', g?.produits);
+  fill('g-besoins',  g?.besoins);
+  fill('g-obs',      g?.obs);
+
+  openModal('modal-garage');
+}
+
+function saveGarage() {
+  const nom = document.getElementById('g-nom').value.trim();
+  if (!nom) { alert('Le nom du garage est obligatoire.'); return; }
+
+  const id = document.getElementById('g-id').value || uid();
+  const existing = data.garages.find(x => x.id === id);
+
+  const garage = {
+    id,
+    nom,
+    contact:  document.getElementById('g-contact').value.trim(),
+    tel:      document.getElementById('g-tel').value.trim(),
+    email:    document.getElementById('g-email').value.trim(),
+    adresse:  document.getElementById('g-adresse').value.trim(),
+    ville:    document.getElementById('g-ville').value.trim(),
+    secteur:  document.getElementById('g-secteur').value,
+    type:     document.getElementById('g-type').value,
+    potentiel:document.getElementById('g-potentiel').value,
+    statut:   document.getElementById('g-statut').value,
+    derniere: document.getElementById('g-derniere').value,
+    relance:  document.getElementById('g-relance').value,
+    produits: document.getElementById('g-produits').value.trim(),
+    besoins:  document.getElementById('g-besoins').value.trim(),
+    obs:      document.getElementById('g-obs').value.trim(),
+    visites:  existing?.visites || []
+  };
+
+  if (existing) {
+    Object.assign(existing, garage);
+  } else {
+    data.garages.push(garage);
+  }
+  save();
+  closeModal('modal-garage');
+  renderView();
+}
+
+function deleteGarage(id) {
+  if (!confirm('Supprimer ce garage et toutes ses visites ?')) return;
+  data.garages = data.garages.filter(g => g.id !== id);
+  save();
+  renderView();
+}
+
+/* ============================================================
+   MODAL VISITE
+   ============================================================ */
+function openModalVisite(garageId, visiteId = null) {
+  const g = data.garages.find(x => x.id === garageId);
+  if (!g) return;
+  const v = visiteId ? (g.visites||[]).find(x => x.id === visiteId) : null;
+
+  document.getElementById('modal-visite-title').textContent = v ? 'Modifier la visite' : `Ajouter une visite — ${g.nom}`;
+  document.getElementById('v-garage-id').value = garageId;
+  document.getElementById('v-visite-id').value = visiteId || '';
+
+  const fill = (eid, val) => { const el = document.getElementById(eid); if (el) el.value = val || ''; };
+  fill('v-date',    v?.date || todayStr());
+  fill('v-relance', v?.relance);
+  fill('v-resume',  v?.resume);
+  fill('v-produits',v?.produits);
+  fill('v-reponse', v?.reponse);
+  fill('v-action',  v?.action);
+
+  openModal('modal-visite');
+}
+
+function saveVisite() {
+  const garageId = document.getElementById('v-garage-id').value;
+  const visiteId = document.getElementById('v-visite-id').value;
+  const date = document.getElementById('v-date').value;
+  if (!date) { alert('La date est obligatoire.'); return; }
+
+  const g = data.garages.find(x => x.id === garageId);
+  if (!g) return;
+  if (!g.visites) g.visites = [];
+
+  const visite = {
+    id:       visiteId || uid(),
+    date,
+    resume:   document.getElementById('v-resume').value.trim(),
+    produits: document.getElementById('v-produits').value.trim(),
+    reponse:  document.getElementById('v-reponse').value.trim(),
+    action:   document.getElementById('v-action').value.trim(),
+    relance:  document.getElementById('v-relance').value
+  };
+
+  // Met à jour le garage avec la dernière date et la prochaine relance
+  const existing = g.visites.find(x => x.id === visiteId);
+  if (existing) {
+    Object.assign(existing, visite);
+  } else {
+    g.visites.push(visite);
+  }
+
+  // Mise à jour automatique de la dernière visite + relance sur le garage
+  const dates = g.visites.map(v => v.date).sort().reverse();
+  if (dates.length) g.derniere = dates[0];
+  if (visite.relance) g.relance = visite.relance;
+  if (g.statut === 'a-visiter') g.statut = 'visite';
+
+  save();
+  closeModal('modal-visite');
+  renderView();
+}
+
+function deleteVisite(garageId, visiteId) {
+  if (!confirm('Supprimer cette visite ?')) return;
+  const g = data.garages.find(x => x.id === garageId);
+  if (!g) return;
+  g.visites = (g.visites || []).filter(v => v.id !== visiteId);
+  save();
+  closeModal('modal-detail');
+  openDetail(garageId);
+  renderView();
+}
+
+/* ============================================================
+   SECTEURS
+   ============================================================ */
+function openModalSecteur() { openModal('modal-secteur'); document.getElementById('s-nom').value = ''; }
+
+function saveSecteur() {
+  const nom = document.getElementById('s-nom').value.trim();
+  if (!nom) { alert('Nom du secteur obligatoire.'); return; }
+  if (data.secteurs.includes(nom)) { alert('Ce secteur existe déjà.'); return; }
+  data.secteurs.push(nom);
+  save();
+  closeModal('modal-secteur');
+  renderView();
+}
+
+function deleteSecteur(nom) {
+  const n = data.garages.filter(g => g.secteur === nom).length;
+  if (n > 0 && !confirm(`Ce secteur contient ${n} garage(s). Ils seront déplacés vers "Autre". Continuer ?`)) return;
+  data.garages.forEach(g => { if (g.secteur === nom) g.secteur = 'Autre'; });
+  data.secteurs = data.secteurs.filter(s => s !== nom);
+  if (!data.secteurs.includes('Autre')) data.secteurs.push('Autre');
+  save();
+  renderView();
+}
+
+/* ============================================================
+   EXPORT / IMPORT
+   ============================================================ */
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  dlBlob(blob, `ep2a-commercial-${todayStr()}.json`);
+}
+
+function exportCSV() {
+  const cols = ['Nom','Contact','Téléphone','Email','Adresse','Ville','Secteur','Type','Potentiel','Statut','Dernière visite','Prochaine relance','Produits','Besoins','Observations'];
+  const rows = data.garages.map(g => [
+    g.nom, g.contact, g.tel, g.email, g.adresse, g.ville, g.secteur,
+    typeLabel(g.type), potentielLabel(g.potentiel), statutLabel(g.statut),
+    g.derniere, g.relance, g.produits, g.besoins, g.obs
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  const csv = '\uFEFF' + [cols.map(c=>`"${c}"`), ...rows].map(r=>r.join(';')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  dlBlob(blob, `ep2a-commercial-${todayStr()}.csv`);
+}
+
+function dlBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function triggerImport() { document.getElementById('import-file').click(); }
+
+function importJSON(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.garages || !imported.secteurs) throw new Error('Format invalide');
+      if (!confirm(`Importer ${imported.garages.length} garage(s) ? Les données actuelles seront remplacées.`)) return;
+      data = imported;
+      save();
+      renderView();
+      alert('Import réussi !');
+    } catch(err) { alert('Erreur lors de l\'import : ' + err.message); }
+  };
+  r.readAsText(file);
+  e.target.value = '';
+}
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
+function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+// Fermer modale en cliquant sur le fond
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-backdrop')) {
+    e.target.classList.add('hidden');
+  }
+});
+
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,j] = d.split('-');
+  return `${j}/${m}/${y}`;
+}
+
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function typeLabel(t) {
+  return { prospect: 'Prospect', actif: 'Client actif', ancien: 'Ancien client' }[t] || t;
+}
+function statutLabel(s) {
+  return { 'a-visiter':'À visiter', visite:'Visité', 'a-relancer':'À relancer', commande:'Commande', regulier:'Régulier' }[s] || s;
+}
+function potentielLabel(p) {
+  return { faible:'Faible', moyen:'Moyen', fort:'Fort' }[p] || p;
+}
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+init();
+</script>
+</body>
+</html>
